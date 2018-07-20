@@ -1,0 +1,5 @@
+aiohttp
+cryptography
+gidgethub
+pyjwt
+pyyaml
