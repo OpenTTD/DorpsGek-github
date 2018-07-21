@@ -62,3 +62,5 @@ async def execute_task(jobs_to_execute, repository_name, ref, clone_url):
                 log.error("No runner registered for environment '%s'; cannot schedule job. Aborting task!",
                           err.args[0])
                 break
+
+    log.info("Task successfully executed")
