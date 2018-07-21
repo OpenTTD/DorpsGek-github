@@ -9,9 +9,9 @@ class ConfigurationEmpty(Exception):
 
 def post_load_config():
     if not os.path.exists(config.REFERENCE_REPOSITORY_FOLDER):
-        os.mkdir(config.REFERENCE_REPOSITORY_FOLDER)
+        os.makedirs(config.REFERENCE_REPOSITORY_FOLDER, exist_ok=True)
     if not os.path.exists(config.WORKING_FOLDER):
-        os.mkdir(config.WORKING_FOLDER)
+        os.makedirs(config.WORKING_FOLDER, exist_ok=True)
 
     with open(config.GITHUB_APP_PRIVATE_KEY_FILE) as f:
         setattr(config, "GITHUB_APP_PRIVATE_KEY", f.read())
