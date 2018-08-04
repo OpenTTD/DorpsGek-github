@@ -1,5 +1,6 @@
 import logging
 
+from dorpsgek_github.core.helpers.aiohttp_ws import WSIsGone
 from dorpsgek_github.core.processes import runner
 from dorpsgek_github.core.processes.github import (
     add_installation,
@@ -9,7 +10,6 @@ from dorpsgek_github.core.processes.github import (
 from dorpsgek_github.core.processes.runner import (
     add_runner,
     remove_runner,
-    RunnerIsGone,
 )
 
 log = logging.getLogger(__name__)
@@ -58,4 +58,4 @@ async def error(event, runner_ws):
     else:
         log.error("Unknown error received from runner")
 
-    raise RunnerIsGone
+    raise WSIsGone

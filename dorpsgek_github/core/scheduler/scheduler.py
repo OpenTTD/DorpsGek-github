@@ -4,11 +4,9 @@ import os
 import tempfile
 
 from dorpsgek_github import config
+from dorpsgek_github.core.helpers.aiohttp_ws import WSIsGone
 from dorpsgek_github.core.helpers.github import download_repository
-from dorpsgek_github.core.processes.runner import (
-    NoRunnerException,
-    RunnerIsGone,
-)
+from dorpsgek_github.core.processes.runner import NoRunnerException
 from dorpsgek_github.core.scheduler.context import Context
 
 log = logging.getLogger(__name__)
@@ -55,7 +53,7 @@ async def execute_task(jobs_to_execute, repository_name, ref, clone_url):
         for job in jobs_to_execute:
             try:
                 await job.executor(job, context)
-            except RunnerIsGone:
+            except WSIsGone:
                 log.error("The runner for this job is no longer available; aborting task!")
                 break
             except NoRunnerException as err:

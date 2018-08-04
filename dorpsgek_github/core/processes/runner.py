@@ -4,6 +4,8 @@ import random
 
 from collections import defaultdict
 
+from dorpsgek_github.core.helpers.aiohttp_ws import WSIsGone
+
 log = logging.getLogger(__name__)
 
 _registry = defaultdict(list)
@@ -16,10 +18,6 @@ class RunnerEventDoesntExist(Exception):
 
 class NoRunnerException(Exception):
     """"Thrown if there was no runner for the given environment."""
-
-
-class RunnerIsGone(Exception):
-    """Thrown is the runner is gone while it was doing something."""
 
 
 async def process_request(event, ws):
@@ -62,7 +60,7 @@ def remove_runner(runner_ws):
             pass
 
     # Notify anything blocking in request/response about the removal
-    runner_ws.request_response_queue.put_nowait(RunnerIsGone)
+    runner_ws.request_response_queue.put_nowait(WSIsGone)
 
 
 class RunnerContext:
