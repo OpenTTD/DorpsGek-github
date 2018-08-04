@@ -5,16 +5,17 @@ import logging
 from aiohttp import web
 
 from dorpsgek_github import config
-from dorpsgek_github.core.helpers.aiohttp_web import (
-    prepare_app,
-    run_apps,
-)
 from dorpsgek_github.core.aiohttp_apps.github import (
     github_handler,
     github_probe_handler,
     github_startup,
 )
 from dorpsgek_github.core.aiohttp_apps.runner import runner_handler
+from dorpsgek_github.core.aiohttp_apps.watcher import watcher_handler
+from dorpsgek_github.core.helpers.aiohttp_web import (
+    prepare_app,
+    run_apps,
+)
 from dorpsgek_github.core.load_config import load_config
 from dorpsgek_github.core.scheduler.scheduler import schedule_runner
 
@@ -35,6 +36,10 @@ def create_web_apps():
     runner_app = web.Application()
     runner_app.router.add_get("/", runner_handler)
     apps.append(prepare_app(runner_app, port=config.RUNNER_PORT))
+
+    watcher_app = web.Application()
+    watcher_app.router.add_get("/", watcher_handler)
+    apps.append(prepare_app(watcher_app, port=config.WATCHER_PORT))
 
     return apps
 

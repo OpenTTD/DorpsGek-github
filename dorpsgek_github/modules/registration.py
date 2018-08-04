@@ -1,7 +1,10 @@
 import logging
 
 from dorpsgek_github.core.helpers.aiohttp_ws import WSIsGone
-from dorpsgek_github.core.processes import runner
+from dorpsgek_github.core.processes import (
+    runner,
+    watcher,
+)
 from dorpsgek_github.core.processes.github import (
     add_installation,
     remove_installation,
@@ -10,6 +13,10 @@ from dorpsgek_github.core.processes.github import (
 from dorpsgek_github.core.processes.runner import (
     add_runner,
     remove_runner,
+)
+from dorpsgek_github.core.processes.watcher import (
+    add_watcher,
+    remove_watcher,
 )
 
 log = logging.getLogger(__name__)
@@ -40,22 +47,44 @@ async def installation_repositories_removed(event, github_api):
 
 
 @runner.register("register")
-async def register(event, runner_ws):
+async def runner_register(event, runner_ws):
     add_runner(runner_ws, event.data["environment"])
     await runner_ws.send_event("registered")
 
 
 @runner.register("close")
-async def close(event, runner_ws):
+async def runner_close(event, runner_ws):
     remove_runner(runner_ws)
     await runner_ws.close()
 
 
 @runner.register("error")
-async def error(event, runner_ws):
+async def runner_error(event, runner_ws):
     if "command_does_not_exist" in event.data:
         log.error("Runner does not support command '%s'", event.data["command_does_not_exist"])
     else:
         log.error("Unknown error received from runner")
+
+    raise WSIsGone
+
+
+@watcher.register("register")
+async def watcher_register(event, watcher_ws):
+    add_watcher(watcher_ws, event.data["protocol"])
+    await watcher_ws.send_event("registered")
+
+
+@watcher.register("close")
+async def watcher_close(event, watcher_ws):
+    remove_watcher(watcher_ws)
+    await watcher_ws.close()
+
+
+@watcher.register("error")
+async def watcher_error(event, watcher_ws):
+    if "command_does_not_exist" in event.data:
+        log.error("Watcher does not support command '%s'", event.data["command_does_not_exist"])
+    else:
+        log.error("Unknown error received from watcher")
 
     raise WSIsGone

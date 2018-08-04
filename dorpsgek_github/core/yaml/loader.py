@@ -7,7 +7,7 @@ from dorpsgek_github.core.yaml.exceptions import (
 )
 from dorpsgek_github.core.yaml.registry import get_keyword_handler
 
-RESERVED_JOB_WORDS = ["stages"]
+RESERVED_JOB_WORDS = ["stages", "notifications"]
 RESERVED_CONFIG_WORDS = ["stage"]
 
 

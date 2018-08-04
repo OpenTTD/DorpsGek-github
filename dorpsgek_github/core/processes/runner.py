@@ -50,7 +50,7 @@ def add_runner(runner_ws, environment):
 
 
 def remove_runner(runner_ws):
-    """Remove a specific runner from all environments. """
+    """Remove a specific runner from all environments."""
 
     for env in _runners.keys():
         try:

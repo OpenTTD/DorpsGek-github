@@ -1,4 +1,7 @@
-from dorpsgek_github.core.processes import runner
+from dorpsgek_github.core.processes import (
+    runner,
+    watcher,
+)
 from dorpsgek_github.core.processes.github import router as github
 
 
@@ -12,3 +15,8 @@ async def github_ping(event, github_api):
 @runner.register("ping")
 async def runner_ping(event, runner_ws):
     await runner_ws.send_event("pong", {"time": event.data["time"]})
+
+
+@watcher.register("ping")
+async def watcher_ping(event, watcher_ws):
+    await watcher_ws.send_event("pong", {"time": event.data["time"]})
