@@ -41,8 +41,8 @@ def create_web_apps():
 
 def main():
     logging.basicConfig(
-        format='%(asctime)s %(levelname)-8s %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
+        format="%(asctime)s %(levelname)-8s %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO)
     load_config()
 
