@@ -2,6 +2,12 @@ stages:
   - build
   - deploy
 
+notifications:
+  push:
+    irc:
+      - openttd
+      - openttd.notice
+
 docker-build:
   stage: build
   dorpsgek: build
