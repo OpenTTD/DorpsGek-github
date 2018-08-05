@@ -1,5 +1,7 @@
 import os
 
+from collections import defaultdict
+
 from dorpsgek_github import config
 
 
@@ -15,6 +17,12 @@ def post_load_config():
 
     with open(config.GITHUB_APP_PRIVATE_KEY_FILE) as f:
         setattr(config, "GITHUB_APP_PRIVATE_KEY", f.read())
+
+    notification_dict = defaultdict(list)
+    for notification in config.NOTIFICATIONS.split(" "):
+        protocol, _, userdata = notification.partition(".")
+        notification_dict[protocol].append(userdata)
+    setattr(config, "NOTIFICATIONS_DICT", notification_dict)
 
 
 def load_config():

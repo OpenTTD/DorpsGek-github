@@ -12,3 +12,7 @@ WATCHER_PORT = 8082
 
 MODULES = ""
 DORPSGEK_COMMANDS = ""
+
+# Where notification are also send (next to what-ever the repository has configured)
+NOTIFICATIONS = ""
+NOTIFICATIONS_DICT = None
