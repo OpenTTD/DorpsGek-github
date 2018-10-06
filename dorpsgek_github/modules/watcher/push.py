@@ -55,4 +55,3 @@ async def push(event, github_api):
     for protocol, userdata in config.NOTIFICATIONS_DICT.items():
         payload["userdata"] = userdata
         await watcher.send_to_watchers(protocol, "notify.push", payload)
-
