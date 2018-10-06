@@ -27,8 +27,8 @@ async def _notify(github_api, ref, *,
     raw_yml = await get_dorpsgek_yml(github_api, repository_name, ref)
     if raw_yml:
         yml = yaml.load(raw_yml)
-        services = yml["notifications"].get("issue", {})
 
+        services = yml["notifications"].get("issue", {})
         for protocol, userdata in services.items():
             payload["userdata"] = userdata
             await watcher.send_to_watchers(protocol, "notify.issue", payload)
