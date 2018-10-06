@@ -4,6 +4,7 @@ from dorpsgek_github import config
 from dorpsgek_github.core.helpers.github import get_dorpsgek_yml
 from dorpsgek_github.core.processes import watcher
 from dorpsgek_github.core.processes.github import router as github
+from dorpsgek_github.modules.watcher import push
 
 
 async def _notify(github_api, ref, *,
@@ -52,6 +53,7 @@ async def pull_request(event, github_api):
 
     if action == "closed" and event.data["pull_request"]["merged"]:
         action = "merged"
+        push.ignore_next_push_sha = event.data["pull_request"]["merge_commit_sha"]
 
     ref = event.data["pull_request"]["base"]["ref"]
 

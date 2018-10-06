@@ -7,11 +7,23 @@ from dorpsgek_github.core.processes import watcher
 from dorpsgek_github.core.processes.github import router as github
 
 
+# If set to a sha, this sha will be ignored once if seen on a push.
+# Used to not show both a Pull Request merge as a Push about the PR.
+ignore_next_push_sha = None
+
+
 @github.register("push")
 async def push(event, github_api):
+    global ignore_next_push_sha
+
     branch = event.data["ref"]
     ref = event.data["head_commit"]["id"]
     repository_name = event.data["repository"]["full_name"]
+
+    # If we were asked to ignore this sha, do that once
+    if ignore_next_push_sha and event.data["after"] == ignore_next_push_sha:
+        ignore_next_push_sha = None
+        return
 
     commits = [
         {
