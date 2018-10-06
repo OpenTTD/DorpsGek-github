@@ -4,6 +4,8 @@ stages:
 
 notifications:
   push:
+    except:
+      - pyup-.*
     irc:
       - openttd
       - openttd.notice
