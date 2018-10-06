@@ -95,3 +95,29 @@ async def issue_comment(event, github_api):
                   action="comment",
                   pull_id=pull_id,
                   title=title)
+
+
+@github.register("pull_request_review")
+async def pull_request_review(event, github_api):
+    repository_name = event.data["repository"]["full_name"]
+    pull_id = event.data["pull_request"]["number"]
+    title = event.data["pull_request"]["title"]
+    url = event.data["review"]["html_url"]
+    user = event.data["sender"]["login"]
+    action = event.data["action"]
+
+    if action == "submitted":
+        action = event.data["review"]["state"]
+
+    if action not in ("dismissed", "approved", "commented", "changes_requested"):
+        return
+
+    ref = event.data["pull_request"]["base"]["ref"]
+
+    await _notify(github_api, ref,
+                  repository_name=repository_name,
+                  user=user,
+                  url=url,
+                  action=action,
+                  pull_id=pull_id,
+                  title=title)
