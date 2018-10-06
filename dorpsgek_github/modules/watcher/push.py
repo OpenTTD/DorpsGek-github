@@ -37,8 +37,7 @@ async def push(event, github_api):
     if len(event.data["commits"]) > 1:
         url = event.data["compare"]
     else:
-        # Strip 28 chars from the sha-hash, to make the URL shorter
-        url = event.data["commits"][0]["url"][:-28]
+        url = event.data["commits"][0]["url"]
 
     # Only notify about pushes to heads; not to tags etc
     if not branch.startswith("refs/heads/"):
