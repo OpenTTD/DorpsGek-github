@@ -19,22 +19,6 @@ _github_tokens = {}
 _github_installations = {}
 
 
-# HACK - Monkeypatch a fix that is already upstream:
-# https://github.com/brettcannon/gidgethub/commit/9f3700db8a62ca3aa229c8291a40b50845dfb12d
-# Should be part of 3.0.0
-@classmethod
-def ratelimit_from_http(cls, headers):
-    try:
-        limit = int(headers["x-ratelimit-limit"])
-        remaining = int(headers["x-ratelimit-remaining"])
-        reset_epoch = float(headers["x-ratelimit-reset"])
-    except KeyError:
-        return None
-    else:
-        return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
-sansio.RateLimit.from_http = ratelimit_from_http  # noqa
-
-
 # The dispatch function of gidgethub does almost exactly what you would like.
 # The only issue is that when there is an exception in the callback, no other
 # callbacks are called. This is not wanted behaviour, as all callbacks are
@@ -65,38 +49,6 @@ async def dispatch(self, event, *args, **kwargs):
 routing.Router.dispatch = dispatch  # noqa
 
 
-class MyGitHubAPI(GitHubAPI):
-    def __init__(self, session, *args, **kwargs):
-        self._jwt = None
-        super().__init__(session, *args, **kwargs)
-
-    async def _request(self, method, url, headers, body=b""):
-        if self._jwt:
-            headers["authorization"] = f"Bearer {self._jwt}"
-        if self._oauth_token:
-            headers["authorization"] = f"token {self._oauth_token}"
-        self._jwt = None
-        self._oauth_token = None
-
-        return await super()._request(method, url, headers, body)
-
-    async def getitem(self, url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None):
-        # HACK - support jwt authorization; https://github.com/brettcannon/gidgethub/pull/62 fixes this correctly.
-        # While waiting for that to land, keep the API the same, and adopt the functionality.
-        self._jwt = jwt
-        self._oauth_token = oauth_token
-
-        return await super().getitem(url, url_vars, accept=accept)
-
-    async def post(self, url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None):
-        # HACK - support jwt authorization; https://github.com/brettcannon/gidgethub/pull/62 fixes this correctly.
-        # While waiting for that to land, keep the API the same, and adopt the functionality.
-        self._jwt = jwt
-        self._oauth_token = oauth_token
-
-        return await super().post(url, url_vars, data=data, accept=accept)
-
-
 class GitHubAPIContext:
     """
     Contextmanager to make GitHub API access a bit easier.
@@ -108,7 +60,7 @@ class GitHubAPIContext:
 
     async def __aenter__(self):
         self._session = aiohttp.ClientSession()
-        return MyGitHubAPI(self._session, "DorpsGek/0.1")
+        return GitHubAPI(self._session, "DorpsGek/0.1")
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self._session.close()
