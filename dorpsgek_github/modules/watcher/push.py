@@ -20,7 +20,7 @@ async def push(event, github_api):
         }
         for commit in event.data["commits"]
     ]
-    user = event.data["pusher"]["name"]
+    user = event.data["sender"]["login"]
 
     if len(event.data["commits"]) > 1:
         url = event.data["compare"]

@@ -45,7 +45,7 @@ async def pull_request(event, github_api):
     pull_id = event.data["pull_request"]["number"]
     title = event.data["pull_request"]["title"]
     url = event.data["pull_request"]["html_url"]
-    user = event.data["pull_request"]["user"]["login"]
+    user = event.data["sender"]["login"]
 
     if action not in ("opened", "synchronize", "closed", "reopened"):
         return
@@ -75,7 +75,7 @@ async def issue_comment(event, github_api):
     repository_name = event.data["repository"]["full_name"]
     pull_id = event.data["issue"]["number"]
     url = event.data["comment"]["html_url"]
-    user = event.data["comment"]["user"]["login"]
+    user = event.data["sender"]["login"]
 
     # To not assume Pull Request are always against 'master',
     # we take an extra roundtrip to find the base branch

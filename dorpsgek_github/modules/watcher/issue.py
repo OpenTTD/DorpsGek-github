@@ -45,7 +45,7 @@ async def issues(event, github_api):
     issue_id = event.data["issue"]["number"]
     title = event.data["issue"]["title"]
     url = event.data["issue"]["html_url"]
-    user = event.data["issue"]["user"]["login"]
+    user = event.data["sender"]["login"]
 
     if action not in ("opened", "closed", "reopened"):
         return
@@ -71,7 +71,7 @@ async def issue_comment(event, github_api):
     issue_id = event.data["issue"]["number"]
     title = event.data["issue"]["title"]
     url = event.data["comment"]["html_url"]
-    user = event.data["comment"]["user"]["login"]
+    user = event.data["sender"]["login"]
 
     await _notify(github_api,  event.data["repository"]["default_branch"],
                   repository_name=repository_name,
