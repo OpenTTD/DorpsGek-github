@@ -3,7 +3,6 @@ import os
 
 from aiohttp import (
     web,
-    web_response,
     WSMsgType,
 )
 from asyncio import (
@@ -12,13 +11,6 @@ from asyncio import (
 )
 
 log = logging.getLogger(__name__)
-
-
-# This bug has been fixed upstream, but not in any release yet
-# https://github.com/aio-libs/aiohttp/pull/3107
-def web_response_eq(self, other):
-    return self is other
-web_response.StreamResponse.__eq__ = web_response_eq  # noqa
 
 
 class WSIsGone(Exception):
